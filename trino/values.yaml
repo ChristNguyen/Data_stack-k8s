@@ -107,8 +107,8 @@ additionalLogProperties: {}
 
 additionalExchangeManagerProperties:
   exchange-s3-region: exchange.s3.region=ap-southeast-1
-  exchange-s3-aws-access-key: exchange.s3.aws-access-key=AKIA4BZ7NVJMM34IAI74
-  exchange-s3-aws-secret-key: exchange.s3.aws-secret-key=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
+  exchange-s3-aws-access-key: exchange.s3.aws-access-key= '''' add access key
+  exchange-s3-aws-secret-key: exchange.s3.aws-secret-key=  '''''' add secret
   exchange-s3-endpoint: exchange.s3.endpoint=https://s3.ap-southeast-1.amazonaws.com
 
 eventListenerProperties: {}
