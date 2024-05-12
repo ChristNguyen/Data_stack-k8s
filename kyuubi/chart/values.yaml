@@ -112,8 +112,8 @@ kyuubiConf:
     spark.kubernetes.driver.container.image=tientrien2505/spark:3.5-aws-s3-iceberg-1.0.2
     spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider
     spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
-    spark.hadoop.fs.s3a.access.key=AKIA4BZ7NVJMM34IAI74
-    spark.hadoop.fs.s3a.secret.key=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
+    spark.hadoop.fs.s3a.access.key=" ......" # add access keys
+    spark.hadoop.fs.s3a.secret.key= " ......" # add access keys
     spark.hadoop.fs.s3a.endpoint=https://s3.ap-southeast-1.amazonaws.com
     spark.sql.catalog.spark_catalog.type=hive
     spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog
@@ -183,7 +183,7 @@ affinity: {}
 securityContext: {}
 
 ranger:
-  rangerUrl: "http://truongdt-ranger-svc.truongdt-ranger.svc.cluster.local:6080"
+  rangerUrl: "http://truongnd-ranger-svc.truongnd-ranger.svc.cluster.local:6080"
   serviceName: "apache-kyuubi"
   cacheDir: "/tmp/policycache"
   pollIntervalMs: 5000
