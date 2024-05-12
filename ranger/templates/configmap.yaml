@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ranger.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "ranger.name" . }}
+    helm.sh/chart: {{ include "ranger.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+    install_properties: |
+        PYTHON_COMMAND_INVOKER=python3
+        DB_FLAVOR=POSTGRES
+        SQL_CONNECTOR_JAR=/opt/apache-ranger/ranger-current-admin/ews/lib/postgresql.jar
+        db_root_user={{ .Values.ranger_admin_conf.ranger_db_root_user }}
+        db_root_password={{ .Values.ranger_admin_conf.ranger_db_root_password }}
+        db_host={{ .Values.ranger_admin_conf.ranger_db_host }}:{{ .Values.ranger_admin_conf.ranger_db_port }}
+        db_ssl_enabled=false
+        db_ssl_required=false
+        db_ssl_verifyServerCertificate=false
+        db_ssl_auth_type=2-way
+        javax_net_ssl_keyStore=
+        javax_net_ssl_keyStorePassword=
+        javax_net_ssl_trustStore=
+        javax_net_ssl_trustStorePassword=
+        javax_net_ssl_trustStore_type=jks
+        javax_net_ssl_keyStore_type=jks
+        db_ssl_certificate_file=
+        db_name={{ .Values.ranger_admin_conf.ranger_db_name }}
+        db_user={{ .Values.ranger_admin_conf.ranger_db_root_user }}
+        db_password={{ .Values.ranger_admin_conf.ranger_db_root_password }}
+        is_override_db_connection_string=false
+        db_override_connection_string=
+        rangerAdmin_password={{ .Values.ranger_admin_conf.keyadmin_password }}
+        rangerTagsync_password={{ .Values.ranger_admin_conf.rangerTagsync_password }}
+        rangerUsersync_password={{ .Values.ranger_admin_conf.rangerUsersync_password }}
+        keyadmin_password={{ .Values.ranger_admin_conf.keyadmin_password }}
+        audit_store=solr
+        audit_elasticsearch_urls=
+        audit_elasticsearch_port=
+        audit_elasticsearch_protocol=
+        audit_elasticsearch_user=
+        audit_elasticsearch_password=
+        audit_elasticsearch_index=
+        audit_elasticsearch_bootstrap_enabled=
+        audit_solr_urls=
+        audit_solr_user=
+        audit_solr_password=
+        audit_solr_zookeepers=
+        audit_solr_collection_name=ranger_audits
+        #solr Properties for cloud mode
+        audit_solr_config_name=ranger_audits
+        audit_solr_configset_location=
+        audit_solr_no_shards=1
+        audit_solr_no_replica=1
+        audit_solr_max_shards_per_node=1
+        audit_solr_acl_user_list_sasl=solr,infra-solr
+        audit_solr_bootstrap_enabled=true
+        audit_cloudwatch_region=
+        audit_cloudwatch_log_group=
+        audit_cloudwatch_log_stream_prefix=
+        policymgr_external_url=http://{{ .Values.ranger_admin_conf.ranger_admin_host }}:{{ .Values.ranger_admin_conf.ranger_ui_port }}
+        policymgr_http_enabled=true
+        policymgr_https_keystore_file=
+        policymgr_https_keystore_keyalias=rangeradmin
+        policymgr_https_keystore_password=
+        policymgr_supportedcomponents=hdfs,yarn,hive,knox,ozone,tag,kafka
+        unix_user=ranger
+        unix_user_pwd=ranger
+        unix_group=ranger
+        authentication_method=ACTIVE_DIRECTORY
+        remoteLoginEnabled=true
+        authServiceHostName=localhost
+        authServicePort=5151
+        ranger_unixauth_keystore=keystore.jks
+        ranger_unixauth_keystore_password=password
+        ranger_unixauth_truststore=cacerts
+        ranger_unixauth_truststore_password=changeit
+        #xa_ldap_url=ldap://127.0.0.1:389
+        #xa_ldap_userDNpattern=uid={0},ou=users,dc=xasecure,dc=net
+        #xa_ldap_groupSearchBase=ou=groups,dc=xasecure,dc=net
+        #xa_ldap_groupSearchFilter=(member=uid={0},ou=users,dc=xasecure,dc=net)
+        #xa_ldap_groupRoleAttribute=cn
+        #xa_ldap_base_dn=dc=xasecure,dc=net
+        #xa_ldap_bind_dn=cn=admin,ou=users,dc=xasecure,dc=net
+        #xa_ldap_bind_password=
+        #xa_ldap_referral=follow|ignore
+        #xa_ldap_userSearchFilter=(uid={0})
+        xa_ldap_url=
+        xa_ldap_userDNpattern=
+        xa_ldap_groupSearchBase=
+        xa_ldap_groupSearchFilter=
+        xa_ldap_groupRoleAttribute=
+        xa_ldap_base_dn=
+        xa_ldap_bind_dn=
+        xa_ldap_bind_password=
+        xa_ldap_referral=
+        xa_ldap_userSearchFilter=
+        #xa_ldap_ad_domain=xasecure.net
+        #xa_ldap_ad_url=ldap://127.0.0.1:389
+        #xa_ldap_ad_base_dn=dc=xasecure,dc=net
+        #xa_ldap_ad_bind_dn=cn=administrator,ou=users,dc=xasecure,dc=net
+        #xa_ldap_ad_bind_password=
+        #xa_ldap_ad_referral=follow|ignore
+        #xa_ldap_ad_userSearchFilter=(sAMAccountName={0})
+        xa_ldap_ad_domain=dev.local
+        xa_ldap_ad_url=ldap://ldap.dev.local:389
+        xa_ldap_ad_base_dn=DC=dev,DC=local
+        ranger_ldap_ad_bind_dn=ldap://ldap.dev.local:389
+        xa_ldap_ad_bind_password=XXXXXXXXXXX
+        xa_ldap_ad_referral=follow
+        xa_ldap_ad_userSearchFilter=(sAMAccountName={0})
+        spnego_principal=
+        spnego_keytab=
+        token_valid=30
+        cookie_domain=
+        cookie_path=/
+        admin_principal=
+        admin_keytab=
+        lookup_principal=
+        lookup_keytab=
+        hadoop_conf=/etc/hadoop-default
+        sso_enabled=false
+        sso_providerurl=https://127.0.0.1:8443/gateway/knoxsso/api/v1/websso
+        sso_publickey=
+        RANGER_ADMIN_LOG_DIR=$PWD
+        RANGER_ADMIN_LOGBACK_CONF_FILE=
+        RANGER_PID_DIR_PATH=/var/run/ranger
+        XAPOLICYMGR_DIR=$PWD
+        app_home=$PWD/ews/webapp
+        TMPFILE=$PWD/.fi_tmp
+        LOGFILE=/opt/apache-ranger/ranger-current-admin/ews/logs/logfile
+        LOGFILES="$LOGFILE"
+        JAVA_BIN='java'
+        JAVA_VERSION_REQUIRED='1.8'
+        JAVA_ORACLE='Java(TM) SE Runtime Environment'
+        ranger_admin_max_heap_size=4g
+        PATCH_RETRY_INTERVAL=120
+        STALE_PATCH_ENTRY_HOLD_TIME=10
+        mysql_core_file=db/mysql/optimized/current/ranger_core_db_mysql.sql
+        mysql_audit_file=db/mysql/xa_audit_db.sql
+        #mysql_asset_file=${PWD}/db/mysql/reset_asset.sql
+        oracle_core_file=db/oracle/optimized/current/ranger_core_db_oracle.sql
+        oracle_audit_file=db/oracle/xa_audit_db_oracle.sql
+        #oracle_asset_file=${PWD}/db/oracle/reset_asset_oracle.sql
+        postgres_core_file=db/postgres/optimized/current/ranger_core_db_postgres.sql
+        postgres_audit_file=db/postgres/xa_audit_db_postgres.sql
+        sqlserver_core_file=db/sqlserver/optimized/current/ranger_core_db_sqlserver.sql
+        sqlserver_audit_file=db/sqlserver/xa_audit_db_sqlserver.sql
+        sqlanywhere_core_file=db/sqlanywhere/optimized/current/ranger_core_db_sqlanywhere.sql
+        sqlanywhere_audit_file=db/sqlanywhere/xa_audit_db_sqlanywhere.sql
+        cred_keystore_filename=$app_home/WEB-INF/classes/conf/.jceks/rangeradmin.jceks

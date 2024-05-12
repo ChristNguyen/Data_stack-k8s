@@ -1,0 +1,45 @@
+nodeSelector:
+  application/type: infra
+openmetadata:
+  config:
+    pipelineServiceClientConfig:
+      apiEndpoint: http://openmetadata-deps-web:8080
+extraVolumeMounts:
+  - name: spc
+    mountPath: /mnt/secret-store
+extraVolumes:
+  - name: spc
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: openmetadata-spc
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::828524833368:role/eksctl-analytics-non-prod-eks-addon-iamservi-Role1-1RYV3FOK9ON2F"
+secretProviderClass:
+  name: openmetadata-spc
+  provider: aws
+  region: ap-southeast-1
+  awsSecretName: ae_openmetadata
+  secrets:
+    - secretName: airflow-secrets
+      keyObjects:
+        - key: openmetadata-airflow-password
+          objectName: openmetadata_airflow_password
+    - secretName: mysql-secrets
+      keyObjects:
+        - key: openmetadata-mysql-password
+          objectName: openmetadata_mysql_password
+    - secretName: airflow-mysql-secrets
+      keyObjects:
+        - key: airflow-mysql-password
+          objectName: airflow_mysql_password
+#    - secretName: mysql
+#      keyObjects:
+#        - key: mysql-password
+#          objectName: mysql_password
+#        - key: mysql-root-password
+#          objectName: mysql_root_password
+
+

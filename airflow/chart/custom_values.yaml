@@ -1,0 +1,89 @@
+airflow:
+  defaultNodeSelector:
+    application/type: airflow
+  usersUpdate: false
+  users:
+  - username: "admin"
+    password: "${ADMIN_PASSWORD_TEMP}"
+    role: Admin
+    email: "${ADMIN_EMAIL_TEMP}"
+    firstName: admin
+    lastName: admin
+  usersTemplates:
+    ADMIN_PASSWORD_TEMP:
+      kind: secret
+      name: airflow-user
+      key: airflow_password
+    ADMIN_EMAIL_TEMP:
+      kind: secret
+      name: airflow-user
+      key: airflow_email
+  dbMigrations:
+    runAsJob: true
+redis:
+  master:
+    nodeSelector:
+      application/type: airflow
+  existingSecret: airflow-redis
+  existingSecretPasswordKey: "redis-password"
+postgresql:
+  master:
+    nodeSelector:
+      application/type: airflow
+  persistence:
+    existingClaim: ""
+    storageClass: efs-sc
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+  image:
+    debug: true
+  volumePermissions:
+    enabled: true
+  securityContext:
+    runAsUser: 1001
+    fsGroup: 1001
+  existingSecret: airflow-postgresql
+  existingSecretKey: postgresql-password
+dags:
+  gitSync:
+    enabled: true
+    repo: "https://gitlab-dso.msb.com.vn/dga/data-platform/warehouse.git"
+    branch: master
+    syncWait: 60
+    syncTimeout: 120
+logs:
+  persistence:
+    enabled: true
+    storageClass: efs-sc
+    size: 5Gi
+    accessMode: ReadWriteMany
+scheduler:
+  logCleanup:
+    enabled: false
+workers:
+  logCleanup:
+    enabled: false
+secretProviderClass:
+  name: airflow-spc
+  provider: aws
+  region: ap-southeast-1
+  awsSecretName: ae_airflow
+  secrets:
+    - secretName: airflow-postgresql
+      keyObjects:
+        - key: postgresql-password
+          objectName: postgresql_password
+    - secretName: airflow-redis
+      keyObjects:
+        - key: redis-password
+          objectName: redis_password
+    - secretName: airflow-user
+      keyObjects:
+        - key: airflow_email
+          objectName: airflow_email
+        - key: airflow_password
+          objectName: airflow_password
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::828524833368:role/eksctl-analytics-non-prod-eks-addon-iamservi-Role1-1RYV3FOK9ON2F"

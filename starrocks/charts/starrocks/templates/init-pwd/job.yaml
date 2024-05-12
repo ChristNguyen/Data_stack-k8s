@@ -1,0 +1,41 @@
+{{- if and .Values.initPassword.enabled .Release.IsInstall }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: starrocks-initpwd
+  namespace: {{ template "starrockscluster.namespace" . }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ template "starrockscluster.name" . }}-initpwd
+        image: {{ .Values.starrocksFESpec.image.repository }}:{{ .Values.starrocksFESpec.image.tag }}
+        imagePullPolicy: Always
+        command:
+        - /bin/bash
+        args:
+        - /opt/starrocks/fe_initpwd.sh
+        - {{ template "starrockscluster.name" . }}-fe-0.{{ template "starrockscluster.name" . }}-fe-search
+        - "9030"
+        env:
+        - name: INIT_PWD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ template "starrockscluster.initpassword.secret.name" . }}
+        volumeMounts:
+        - mountPath: /opt/starrocks/fe_initpwd.sh
+          name: fe-initpwd-shell
+          subPath: fe_initpwd.sh
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+            - key: fe_initpwd.sh
+              path: fe_initpwd.sh
+          name: init-pwd-shell
+          optional: false
+        name: fe-initpwd-shell
+      restartPolicy: OnFailure
+  backoffLimit: 10
+{{- end }}

@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hiveMetastore.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "hiveMetastore.name" . }}
+    {{- include "hiveMetastore.labels" . | nindent 4 }}
+data:
+  hive-site-env.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+        <property>
+          <name>hive.metastore.warehouse.dir</name>
+          <value>/opt/hive/data/warehouse</value>
+        </property>
+        <property>
+          <name>javax.jdo.option.ConnectionURL</name>
+          <value>jdbc:postgresql://{{ .Release.Name }}-postgresql/{{ .Values.postgresql.global.postgresql.auth.database }}</value>
+        </property>
+        <property>
+          <name>javax.jdo.option.ConnectionDriverName</name>
+          <value>org.postgresql.Driver</value>
+        </property>
+        <property>
+          <name>javax.jdo.option.ConnectionUserName</name>
+          <value>{{ .Values.postgresql.global.postgresql.auth.username }}</value>
+        </property>
+        <property>
+          <name> javax.jdo.option.ConnectionPassword</name>
+          <value>$DB_PASSWORD</value>
+        </property>
+        <property>
+          <name>hive.metastore.event.db.notification.api.auth</name>
+          <value>false</value>
+        </property>
+        <property>
+            <name>fs.s3a.access.key</name>
+            <value>$S3_ACCESS_KEY</value>
+        </property>
+        <property>
+            <name>fs.s3a.secret.key</name>
+            <value>$S3_SECRET_KEY</value>
+        </property>
+        <property>
+            <name>fs.s3a.connection.ssl.enabled</name>
+            <value>false</value>
+        </property>
+        <property>
+            <name>fs.s3a.path.style.access</name>
+            <value>true</value>
+        </property>
+        <property>
+            <name>fs.s3a.endpoint</name>
+            <value>$S3_ENDPOINT</value>
+        </property>
+        <property>
+            <name>com.amazonaws.services.s3.enableV4</name>
+            <value>true</value>
+        </property>
+    </configuration>

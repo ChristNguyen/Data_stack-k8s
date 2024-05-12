@@ -1,0 +1,4 @@
+gitsync:
+  repo: https://gitlab-dso.msb.com.vn/dga/data-platform/warehouse.git
+nodeSelector:
+  application/type: spark

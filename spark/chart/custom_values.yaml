@@ -1,0 +1,6 @@
+sparkJobNamespace: spark
+webhook:
+  enable: true
+  port: 443
+rbac:
+  create: true

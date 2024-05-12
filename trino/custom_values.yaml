@@ -1,0 +1,26 @@
+coordinator:
+  nodeSelector:
+    application/type: trino
+worker:
+  nodeSelector:
+    application/type: trino
+server:
+  workers: 2
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::828524833368:role/eksctl-analytics-non-prod-eks-addon-iamservi-Role1-1RYV3FOK9ON2F"
+secretProviderClass:
+  name: trino-spc
+  provider: aws
+  region: ap-southeast-1
+  awsSecretName: ae_trino
+  secrets:
+    - secretName: trino-secret-catalog
+      keyObjects:
+        - key: "hive_s3.properties"
+          objectName: hive_catalog
+          aliasName: "hive_s3.properties"
+        - key: "oracle_dgaworkzone.properties"
+          objectName: oracle_dgaworkzone_catalog
+          aliasName: "oracle_dgaworkzone.properties"

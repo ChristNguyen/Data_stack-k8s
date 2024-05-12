@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: git-sync-warehouse
+spec:
+  selector:
+    matchLabels:
+      name: warehouse
+  template:
+    metadata:
+      labels:
+        name: warehouse
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+      - name: git-sync
+        image: registry.k8s.io/git-sync/git-sync:v3.6.5
+        volumeMounts:
+        - name: code
+          mountPath: /tmp/git
+        env:
+        - name: GIT_SYNC_ONE_TIME
+          value: "false"
+        # - name: GIT_SYNC_ROOT
+        #   value: /tmp/git
+        - name: GIT_SYNC_DEST
+          value: warehouse
+        - name: GIT_SYNC_REPO
+          value: "{{ .Values.gitsync.repo }}"
+        - name: GIT_SYNC_BRANCH
+          value: master
+        - name: GIT_SYNC_REV
+          value: HEAD
+        - name: GIT_SYNC_DEPTH
+          value: "1"
+        - name: GIT_SYNC_WAIT
+          value: "60"
+        - name: GIT_SYNC_TIMEOUT
+          value: "120"
+        - name: GIT_SYNC_ADD_USER
+          value: "true"
+        - name: GIT_SYNC_MAX_SYNC_FAILURES
+          value: "0"
+        - name: GIT_SYNC_SUBMODULES
+          value: recursive
+        - name: GIT_SYNC_KNOWN_HOSTS
+          value: "false"
+      volumes:
+      - name: code
+        hostPath:
+          path: /var/code

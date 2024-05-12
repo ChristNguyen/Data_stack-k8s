@@ -1,0 +1,24 @@
+persistence:
+  enabled: true
+  storageClassName: efs-root-sc
+nodeSelector:
+  application/type: infra
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::828524833368:role/eksctl-analytics-non-prod-eks-addon-iamservi-Role1-1RYV3FOK9ON2F"
+admin:
+  existingSecret: "grafana"
+  userKey: admin_username
+  passwordKey: admin_password
+secretProviderClass:
+  name: grafana-spc
+  provider: aws
+  region: ap-southeast-1
+  awsSecretName: ae_grafana
+  secrets:
+    - secretName: grafana
+      keyObjects:
+        - key: admin_username
+          objectName: admin_username
+        - key: admin_password
+          objectName: admin_password

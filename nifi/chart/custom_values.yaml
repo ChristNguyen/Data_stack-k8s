@@ -1,0 +1,8 @@
+zookeeper:
+  global:
+    storageClass: efs-sc
+  persistence:
+    enabled: true
+persistence:
+  enabled: true
+  storageClass: efs-sc

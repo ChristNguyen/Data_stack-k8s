@@ -1,0 +1,5 @@
+sparkJobNamespace: spark
+webhook:
+  enable: true
+rbac:
+  create: true

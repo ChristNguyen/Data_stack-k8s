@@ -1,0 +1,11 @@
+apiVersion: v2
+name: warehouse
+description: A Helm chart for warehouse
+version: 0.0.1
+appVersion: 0.0.1
+keywords:
+  - warehouse
+home: https://gitlab-dso.msb.com.vn/dga/data-platform/warehouse
+maintainers:
+  - name: truongdt3
+    email: truongdt3@msb.com.vn

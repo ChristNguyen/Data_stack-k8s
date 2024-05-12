@@ -1,0 +1,172 @@
+---
+# Default values for eck-stack.
+# This is a YAML-formatted file.
+
+# If enabled, will use the eck-elasticsearch chart and deploy an Elasticsearch resource.
+#
+eck-elasticsearch:
+  enabled: true
+  # This is adjusting the full name of the elasticsearch resource so that both the eck-elasticsearch
+  # and the eck-kibana chart work together by default in the eck-stack chart.
+  fullnameOverride: elasticsearch
+  annotations:
+    eck.k8s.elastic.co/license: basic
+  nodeSets:
+  - name: default
+    count: 1
+    config:
+      node.store.allow_mmap: false
+
+# If enabled, will use the eck-kibana chart and deploy a Kibana resource.
+#
+eck-kibana:
+  enabled: true
+  fullnameOverride: kibana
+  annotations:
+    eck.k8s.elastic.co/license: basic
+  spec:
+    # This is also adjusting the kibana reference to the elasticsearch resource named previously so that
+    # both the eck-elasticsearch and the eck-kibana chart work together by default in the eck-stack chart.
+    elasticsearchRef:
+      name: elasticsearch
+      namespace: elastic
+    config:
+      xpack.fleet.agents.elasticsearch.hosts: ["http://elasticsearch-es-http.elastic.svc:9200"]
+      xpack.fleet.agents.fleet_server.hosts: ["https://fleet-server-agent-http.elastic.svc:8220"]
+      xpack.fleet.packages:
+      - name: system
+        version: latest
+      - name: elastic_agent
+        version: latest
+      - name: fleet_server
+        version: latest
+      - name: kubernetes
+        version: latest
+      xpack.fleet.agentPolicies:
+      - name: Fleet Server on ECK policy
+        id: eck-fleet-server
+        namespace: elastic
+        monitoring_enabled:
+        - logs
+        - metrics
+        package_policies:
+        - name: fleet_server-1
+          id: fleet_server-1
+          package:
+            name: fleet_server
+      - name: Elastic Agent on ECK policy
+        id: eck-agent
+        namespace: elastic
+        monitoring_enabled:
+        - logs
+        - metrics
+        unenroll_timeout: 900
+        package_policies:
+        - package:
+            name: system
+          name: system-1
+        - package:
+            name: kubernetes
+          name: kubernetes-1
+
+
+# If enabled, will use the eck-agent chart and deploy an Elastic Agent instance.
+#
+eck-agent:
+  enabled: true
+
+  annotations:
+    eck.k8s.elastic.co/license: basic
+  
+  spec:
+    policyID: eck-agent
+
+    kibanaRef:
+      name: kibana
+      namespace: elastic
+      # serviceName: kibana-kb-http
+      # secretName: kibana-kb-http-certs-internal
+
+    elasticsearchRefs: []
+
+    fleetServerRef:
+      name: fleet-server
+      namespace: elastic
+      # serviceName: fleet-server-agent-http
+      # secretName: fleet-server-agent-http-certs-internal
+    
+    mode: fleet
+    daemonSet:
+      podTemplate:
+        spec:
+          serviceAccountName: elastic-agent
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
+          automountServiceAccountToken: true
+          securityContext:
+            runAsUser: 0
+
+# If enabled, will use the eck-fleet-server chart and deploy a Fleet Server resource.
+#
+eck-fleet-server:
+  # enabled: false
+  enabled: true
+  annotations:
+    eck.k8s.elastic.co/license: basic
+  fullnameOverride: fleet-server
+  spec:
+    policyID: eck-fleet-server
+    kibanaRef:
+      name: kibana
+      namespace: elastic
+      # serviceName: kibana-kb-http
+      # secretName: kibana-kb-http-certs-internal
+    elasticsearchRefs:
+    - name: elasticsearch
+      namespace: elastic
+    # deployment:
+    #   replicas: 1
+    #   podTemplate:
+    #     spec:
+    #       serviceAccountName: fleet-server
+    #       automountServiceAccountToken: true
+    #       securityContext:
+    #         runAsUser: 0
+
+# If enabled, will use the eck-beats chart and deploy a Beats resource.
+#
+eck-beats:
+  enabled: false
+
+  # enabled: true
+  # annotations:
+  #   eck.k8s.elastic.co/license: basic
+  # spec:
+  #   type: metricbeat
+  #   elasticsearchRefs:
+  #   - name: elasticsearch
+  #     namespace: elastic
+  #   kibanaRef:
+  #     name: kibana
+  #     namespace: elastic
+  #   config:
+  #     filebeat.inputs: []
+      
+  #   daemonSet:
+  #     enabled: true
+  #     podTemplate:
+  #       spec:
+  #         serviceAccountName: elastic-agent
+  #         hostNetwork: true
+  #         dnsPolicy: ClusterFirstWithHostNet
+  #         automountServiceAccountToken: true
+  #         securityContext:
+  #           runAsUser: 0
+
+
+# If enabled, will use the eck-logstash chart and deploy a Logstash resource.
+#
+eck-logstash:
+  enabled: false
+  # annotations:
+  #   eck.k8s.elastic.co/license: basic

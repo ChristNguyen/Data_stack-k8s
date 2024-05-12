@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: {{ .Values.secretProviderClass.roleArn | quote }}
+  labels:
+    app.kubernetes.io/managed-by: eksctl
+  name: {{ .Release.Name }}-csi-sa
+  namespace: {{ .Release.Namespace | quote }}

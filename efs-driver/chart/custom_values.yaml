@@ -1,0 +1,7 @@
+controller:
+  serviceAccount:
+    create: true
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::828524833368:role/AmazonEKS_EFS_CSI_DriverRole'
+      kubectl.kubernetes.io/last-applied-configuration: >
+        {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"eks.amazonaws.com/role-arn":"arn:aws:iam::828524833368:role/AmazonEKS_EFS_CSI_DriverRole"},"labels":{"app.kubernetes.io/name":"aws-efs-csi-driver"},"name":"efs-csi-controller-sa","namespace":"kube-system"}}

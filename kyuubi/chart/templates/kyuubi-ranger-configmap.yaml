@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ranger
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  ranger-spark-security.xml: |
+    <configuration>
+    <property>
+        <name>ranger.plugin.spark.policy.rest.url</name>
+        <value>{{ .Values.ranger.rangerUrl }}</value>
+    </property>
+    <property>
+        <name>ranger.plugin.spark.service.name</name>
+        <value>{{ .Values.ranger.serviceName }}</value>
+    </property>
+    <property>
+        <name>ranger.plugin.spark.policy.cache.dir</name>
+        <value>{{ .Values.ranger.cacheDir }}</value>
+    </property>
+    <property>
+        <name>ranger.plugin.spark.policy.pollIntervalMs</name>
+        <value>{{ .Values.ranger.pollIntervalMs }}</value>
+    </property>
+    <property>
+        <name>ranger.plugin.spark.policy.source.impl</name>
+        <value>org.apache.ranger.admin.client.RangerAdminRESTClient</value>
+    </property>
+    </configuration>
+
+
